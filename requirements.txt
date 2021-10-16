@@ -1,0 +1,6 @@
+pycocotools
+pixellib
+torch
+torchfile
+torchvision
+numpy
