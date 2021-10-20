@@ -12,13 +12,14 @@ import cv2
 
 
 def main():
-    # Initialise video and segmentation model
+    # Initialise the video feed
     height = 480
     width = 640
     capture = cv2.VideoCapture(0)
     capture.set(3, width)
     capture.set(4, height)
 
+    # Create an instance of the Resnet50 model
     ins = instanceSegmentation()
     ins.load_model("pointrend_resnet50.pkl")
 
@@ -34,10 +35,11 @@ def main():
                                                 extract_segmented_objects=False,
                                                 show_bboxes=True)
 
+        # Show the segmented video in a window
         cv2.imshow('frame', frame)
 
+        # If the user presses the q key, close the window.
         key = cv2.waitKey(25)
-
         if key & 0xff == ord('q'):
             break
 

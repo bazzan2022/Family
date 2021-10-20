@@ -27,7 +27,7 @@ import cv2
 
 
 def main():
-    # Initialise video and segmentation model
+    # Initialise video, segmentation model and background image
     height = 480
     width = 640
     capture = cv2.VideoCapture(0)
