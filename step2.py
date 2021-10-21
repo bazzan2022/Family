@@ -27,42 +27,46 @@ import cv2
 
 
 def main():
-    # Initialise video, segmentation model and background image
+    # Initialise webcam video
     height = 480
     width = 640
     capture = cv2.VideoCapture(0)
     capture.set(3, width)
     capture.set(4, height)
 
+    # Create an instance of the Resnet50 model
     ins = instanceSegmentation()
     ins.load_model("pointrend_resnet50.pkl")
 
+    # Load replacement background image
     background_image = cv2.imread("background.jpg")
     background_image = background_image.astype("uint8")
 
     # Select the resnet50 classes you want to segment by
     target_classes = ins.select_target_classes(person=True)
 
+    # Run this every frame
     while True:
         ret, frame = capture.read()
 
         # Segment people from image
-        segment_mask, output = ins.segmentFrame(frame.copy(),
-                                                segment_target_classes=target_classes,
-                                                extract_segmented_objects=False)
+        segment_mask, output = ins.segmentFrame(
+            frame.copy(),
+            segment_target_classes=target_classes,
+            extract_segmented_objects=False)
 
         # Extract first mask from segmented masks and create inverse
         mask = segment_mask["masks"].astype("uint8")
 
-        mask.resize(
-            (mask.shape[0], mask.shape[1], 1), refcheck=False)
+        mask.resize((mask.shape[0], mask.shape[1], 1), refcheck=False)
 
         mask_inverse = 1 - mask
         mask_inverse = mask_inverse.astype("uint8")
 
         # Composite background with foreground using mask
-        bg = cv2.bitwise_and(
-            background_image, background_image, mask=mask_inverse)
+        bg = cv2.bitwise_and(background_image,
+                             background_image,
+                             mask=mask_inverse)
         fg = cv2.bitwise_and(frame, frame, mask=mask)
 
         composite = cv2.add(bg, fg)
@@ -70,8 +74,8 @@ def main():
         # Display results in windows
         cv2.imshow("composite", composite)
 
+        # If the user presses the q key, close the window
         key = cv2.waitKey(25)
-
         if key & 0xff == ord('q'):
             break
 

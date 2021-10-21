@@ -10,16 +10,18 @@ from utils import StyleLoader
 
 
 def main():
-    # Initialise video and segmentation model
+    # Initialise webcam video
     height = 480
     width = 640
     capture = cv2.VideoCapture(0)
     capture.set(3, width)
     capture.set(4, height)
 
+    # Create an instance of the Resnet50 model
     ins = instanceSegmentation()
     ins.load_model("pointrend_resnet50.pkl")
 
+    # Load replacement background image
     background_image = cv2.imread("background.jpg")
     background_image = background_image.astype("uint8")
 
@@ -39,26 +41,28 @@ def main():
 
     style_idx = 0
 
+    # Run this every frame
     while True:
         ret, frame = capture.read()
 
         # Segment people from image
-        segment_mask, output = ins.segmentFrame(frame.copy(),
-                                                segment_target_classes=target_classes,
-                                                extract_segmented_objects=False)
+        segment_mask, output = ins.segmentFrame(
+            frame.copy(),
+            segment_target_classes=target_classes,
+            extract_segmented_objects=False)
 
         # Extract first mask from segmented masks and create inverse
         mask = segment_mask["masks"].astype("uint8")
 
-        mask.resize(
-            (mask.shape[0], mask.shape[1], 1), refcheck=False)
+        mask.resize((mask.shape[0], mask.shape[1], 1), refcheck=False)
 
         mask_inverse = 1 - mask
         mask_inverse = mask_inverse.astype("uint8")
 
         # Composite background with foreground using mask
-        bg = cv2.bitwise_and(
-            background_image, background_image, mask=mask_inverse)
+        bg = cv2.bitwise_and(background_image,
+                             background_image,
+                             mask=mask_inverse)
         fg = cv2.bitwise_and(frame, frame, mask=mask)
 
         composite = cv2.add(bg, fg)
@@ -86,8 +90,9 @@ def main():
         cv2.imshow("composite", nst_image)
         cv2.imshow("frame", frame)
 
+        # If the user presses the q key, close the window
+        # If they press the n key, cycle to the next style
         key = cv2.waitKey(25)
-
         if key & 0xff == ord('q'):
             break
         if key & 0xff == ord('n'):

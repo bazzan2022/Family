@@ -12,7 +12,7 @@ import cv2
 
 
 def main():
-    # Initialise the video feed
+    # Initialise webcam video
     height = 480
     width = 640
     capture = cv2.VideoCapture(0)
@@ -26,19 +26,21 @@ def main():
     # Select the resnet50 classes you want to segment by
     target_classes = ins.select_target_classes(person=True)
 
+    # Run this every frame
     while True:
         ret, frame = capture.read()
 
         # Segment people from image
-        segment_mask, output = ins.segmentFrame(frame,
-                                                segment_target_classes=target_classes,
-                                                extract_segmented_objects=False,
-                                                show_bboxes=True)
+        segment_mask, output = ins.segmentFrame(
+            frame.copy(),
+            segment_target_classes=target_classes,
+            extract_segmented_objects=False,
+            show_bboxes=True)
 
         # Show the segmented video in a window
-        cv2.imshow('frame', frame)
+        cv2.imshow('frame', output)
 
-        # If the user presses the q key, close the window.
+        # If the user presses the q key, close the window
         key = cv2.waitKey(25)
         if key & 0xff == ord('q'):
             break
