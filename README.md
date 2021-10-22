@@ -12,4 +12,4 @@ Pre- Requirements:
 1. Python 3.9 --> https://www.python.org/downloads/release/python-397/
 2. Visual Studio 2014 or higher version --> https://openframeworks.cc/setup/vs/
 
-Thanks!
+Run the main.py file and have fun!
