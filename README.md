@@ -13,3 +13,5 @@ Pre- Requirements:
 2. Visual Studio 2014 or higher version --> https://openframeworks.cc/setup/vs/
 
 Run the main.py file and have fun!
+
+![after 3](https://user-images.githubusercontent.com/84362732/138391843-82b10069-601a-4f07-a325-57d3c7ef6696.PNG)
